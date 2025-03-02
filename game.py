@@ -289,7 +289,7 @@ class Game:
         # Draw snake length and speed with semi-transparent background
         # Load custom font for OSD
         font_path = os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf')
-        font = pygame.font.Font(font_path, 20)
+        font = pygame.font.Font(font_path, 16)
         # Create a surface for the OSD with alpha channel
         osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
         pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background
@@ -410,7 +410,7 @@ class Game:
         # Draw snake length and speed with semi-transparent background
         # Load custom font for OSD
         font_path = os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf')
-        font = pygame.font.Font(font_path, 20)
+        font = pygame.font.Font(font_path, 16)
         # Create a surface for the OSD with alpha channel
         osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
         pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background
@@ -578,7 +578,7 @@ class Game:
         # Draw snake length and speed with semi-transparent background
         # Load custom font for OSD
         font_path = os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf')
-        font = pygame.font.Font(font_path, 20)
+        font = pygame.font.Font(font_path, 16)
         # Create a surface for the OSD with alpha channel
         osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
         pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background

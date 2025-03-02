@@ -526,7 +526,7 @@ class Game:
         # Update game speed based on snake length
         base_speed = self.speed_slider.value
         length_bonus = self.snake.length // 10
-        new_speed = base_speed + length_bonus
+        new_speed = base_speed + length_bonus * 2
         
         # Cycle theme when speed increases
         if new_speed > self.game_speed:

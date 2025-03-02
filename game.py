@@ -361,7 +361,13 @@ class Game:
         # Update game speed based on snake length
         base_speed = self.speed_slider.value
         length_bonus = self.snake.length // 10
-        self.game_speed = base_speed + length_bonus
+        new_speed = base_speed + length_bonus
+        
+        # Cycle theme when speed increases
+        if new_speed > self.game_speed:
+            self.cycle_theme(1)
+            
+        self.game_speed = new_speed
 
         self.move_timer += 1
         if self.move_timer >= self.fps / self.game_speed:
@@ -409,7 +415,7 @@ class Game:
         
         # Render text with smaller font
         font = pygame.font.Font(None, 24)  # Reduced font size
-        text = font.render(f'🐍 {self.snake.length}   ⚡ {self.game_speed}   Theme: {self.current_theme}', True, TEXT_COLORS['score'])
+        text = font.render(f'🐍 {self.snake.length}   ⚡ {self.game_speed}', True, TEXT_COLORS['score'])
         text_rect = text.get_rect(center=(200, 15))  # Center text in OSD surface
         osd_surface.blit(text, text_rect)
         
@@ -524,7 +530,13 @@ class Game:
         # Update game speed based on snake length
         base_speed = self.speed_slider.value
         length_bonus = self.snake.length // 10
-        self.game_speed = base_speed + length_bonus
+        new_speed = base_speed + length_bonus
+        
+        # Cycle theme when speed increases
+        if new_speed > self.game_speed:
+            self.cycle_theme(1)
+            
+        self.game_speed = new_speed
 
         self.move_timer += 1
         if self.move_timer >= self.fps / self.game_speed:

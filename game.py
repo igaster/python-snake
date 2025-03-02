@@ -19,6 +19,13 @@ WHITE = (255, 255, 255)
 GRAY = (128, 128, 128)
 RED = (255, 0, 0)
 
+# Text colors
+TEXT_COLORS = {
+    'score': WHITE,  # Use white color for score display
+    'game_over': WHITE,  # Use white color for game over text
+    'menu': WHITE  # Use white color for menu text
+}
+
 # Pantone-inspired colors for snake segments
 SNAKE_COLORS = [
     (0, 168, 107),    # Pantone 2420 - Green
@@ -304,33 +311,39 @@ class Game:
 
         self.screen.fill(BLACK)
         
+        # Draw grid with semi-transparent dotted lines
+        grid_color = (128, 128, 128, 64)  # Semi-transparent gray
+        grid_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
+        
+        # Draw vertical grid lines
+        for x in range(0, WINDOW_WIDTH, GRID_SIZE):
+            for y in range(0, WINDOW_HEIGHT, 2):  # Draw dotted lines
+                if y % 4 == 0:  # Skip every other dot to create dotted effect
+                    pygame.draw.line(grid_surface, grid_color, (x, y), (x, y + 1))
+        
+        # Draw horizontal grid lines
+        for y in range(0, WINDOW_HEIGHT, GRID_SIZE):
+            for x in range(0, WINDOW_WIDTH, 2):  # Draw dotted lines
+                if x % 4 == 0:  # Skip every other dot to create dotted effect
+                    pygame.draw.line(grid_surface, grid_color, (x, y), (x + 1, y))
+        
+        # Blit the grid surface onto the screen
+        self.screen.blit(grid_surface, (0, 0))
+        
         # Draw snake length and speed with semi-transparent background
         font = pygame.font.Font(None, 36)
         # Create a surface for the OSD with alpha channel
-        osd_surface = pygame.Surface((200, 80), pygame.SRCALPHA)
-        pygame.draw.rect(osd_surface, (0, 0, 0, 128), (0, 0, 200, 80))  # Semi-transparent black background
+        osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)  # Reduced height, increased width
+        pygame.draw.rect(osd_surface, (0, 0, 0, 128), (0, 0, 400, 30))  # Semi-transparent black background
         
-        # Render text
-        # Add after existing color definitions
-        TEXT_COLORS = {
-            'title': SNAKE_COLORS[0],     # Green
-            'score': SNAKE_COLORS[9],     # Blue
-            'game_over': SNAKE_COLORS[18]  # Pink
-        }
-
-        # Render title text
-        title_text = self.font.render('Snake Game', True, TEXT_COLORS['title'])
+        # Render text with smaller font
+        font = pygame.font.Font(None, 24)  # Reduced font size
+        text = font.render(f'🐍 {self.snake.length}   ⚡ {self.game_speed}', True, TEXT_COLORS['score'])
+        text_rect = text.get_rect(center=(200, 15))  # Center text in OSD surface
+        osd_surface.blit(text, text_rect)
         
-        # ... in draw method:
-        length_text = self.font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
-        speed_text = self.font.render(f'Speed: {self.game_speed}', True, TEXT_COLORS['score'])
-        
-        # Blit text onto OSD surface
-        osd_surface.blit(length_text, (10, 10))
-        osd_surface.blit(speed_text, (10, 40))
-        
-        # Blit OSD surface onto main screen
-        self.screen.blit(osd_surface, (10, 10))
+        # Center OSD surface at the top of the screen
+        self.screen.blit(osd_surface, (WINDOW_WIDTH//2 - 200, 10))
         
         # Draw snake segments with rounded corners
         for i, pos in enumerate(self.snake.positions):

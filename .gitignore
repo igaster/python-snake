@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+.pygbag/
+web-cache/
+build/
+.pytest_cache/

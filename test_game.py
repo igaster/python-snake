@@ -3,7 +3,7 @@ from game import Snake, Food, GRID_WIDTH, GRID_HEIGHT, SNAKE_COLORS
 
 def test_snake_initial_state():
     snake = Snake()
-    assert snake.length == 3
+    assert snake.length == 31
     assert len(snake.positions) == 1
     assert snake.positions[0] == (GRID_WIDTH // 2, GRID_HEIGHT // 2)
     assert snake.direction == (1, 0)

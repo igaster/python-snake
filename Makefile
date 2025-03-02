@@ -1,4 +1,4 @@
-.PHONY: venv init test run
+.PHONY: venv init test run web
 
 PYTHON = python3
 
@@ -19,3 +19,6 @@ test: venv
 
 run: venv
 	venv/bin/python3 game.py
+
+web: venv
+	venv/bin/python3 -m pygbag --port 8000 main.py

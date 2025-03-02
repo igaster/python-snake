@@ -1,5 +1,5 @@
 import pytest
-from game import Snake, Food, GRID_WIDTH, GRID_HEIGHT, SNAKE_COLORS
+from game import Snake, Food, Game, GRID_WIDTH, GRID_HEIGHT, SNAKE_COLORS, THEMES
 
 def test_snake_initial_state():
     snake = Snake()
@@ -111,3 +111,35 @@ def test_food_collision():
     # Move snake to food position
     assert snake.move() == True
     assert snake.get_head_position() == food.position
+
+def test_theme_rotation():
+    game = Game()
+    game.state = 'playing'
+    game.snake = Snake()
+    game.food = Food()
+    
+    # Set initial theme and speed
+    initial_theme = game.current_theme
+    initial_theme_index = game.theme_index
+    game.speed_slider.value = 20  # Set base speed
+    
+    # Grow snake to increase speed
+    for _ in range(10):  # Grow snake by 10
+        game.snake.length += 1
+        game.update()
+    
+    # Verify theme has changed
+    assert game.current_theme != initial_theme
+    assert game.theme_index != initial_theme_index
+    
+    # Verify speed increase
+    assert game.game_speed > game.speed_slider.value
+    
+    # Verify theme cycles through available themes
+    themes_seen = set()
+    for _ in range(len(THEMES)):
+        themes_seen.add(game.current_theme)
+        game.cycle_theme(1)
+    
+    # Verify all themes were used
+    assert len(themes_seen) == len(THEMES)

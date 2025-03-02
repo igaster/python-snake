@@ -1,6 +1,6 @@
 # Python Snake Game
 
-> **Note**: The entire codebase was created using an AI code editor ([TRAE AI](https://www.trae.ai/)) as an experiment. This README was generated with the assistance of AI.
+> **Note**: The entire codebase and Github Actions were created using an AI code editor ([TRAE AI](https://www.trae.ai/)) as an experiment. This README was generated with the assistance of AI.
 
 🕹️ Try final game at:  https://igaster.github.io/python-snake/
 

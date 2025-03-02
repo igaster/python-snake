@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 from typing import Tuple, List
 
 # Initialize Pygame
@@ -168,6 +169,38 @@ class Food:
             if self.position not in snake_positions:
                 break
 
+# Theme definitions
+THEMES = {
+    'classic': {
+        'name': 'Classic',
+        'background': (0, 0, 0),  # Black
+        'grid': (128, 128, 128, 64),  # Semi-transparent gray
+        'osd_bg': (0, 0, 0, 128),  # Semi-transparent black
+        'osd_text': (255, 255, 255),  # White
+    },
+    'forest': {
+        'name': 'Forest',
+        'background': (15, 56, 15),  # Dark green
+        'grid': (48, 98, 48, 64),  # Semi-transparent light green
+        'osd_bg': (15, 56, 15, 128),  # Semi-transparent dark green
+        'osd_text': (144, 238, 144),  # Light green
+    },
+    'neon': {
+        'name': 'Neon',
+        'background': (25, 25, 35),  # Dark blue-gray
+        'grid': (0, 255, 255, 48),  # Semi-transparent cyan
+        'osd_bg': (25, 25, 35, 128),  # Semi-transparent dark blue-gray
+        'osd_text': (255, 0, 255),  # Magenta
+    },
+    'desert': {
+        'name': 'Desert',
+        'background': (139, 69, 19),  # Saddle brown
+        'grid': (210, 180, 140, 64),  # Semi-transparent tan
+        'osd_bg': (139, 69, 19, 128),  # Semi-transparent saddle brown
+        'osd_text': (255, 223, 186),  # Peach
+    },
+}
+
 class Game:
     def __init__(self):
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -182,85 +215,24 @@ class Game:
         self.game_speed = SPEED
         self.state = 'menu'  # 'menu', 'settings', 'playing'
         self.font = pygame.font.Font(None, 36)  # Initialize font
+        self.theme_list = list(THEMES.keys())
+        self.current_theme = 'neon'
+        self.theme_index = self.theme_list.index(self.current_theme)
         
         # Create menu buttons
         btn_width, btn_height = 200, 50
         center_x = WINDOW_WIDTH // 2 - btn_width // 2
         self.start_button = Button(center_x, 200, btn_width, btn_height, 'Start Game')
+        self.start_button.active = True  # Set start button as active by default
         self.settings_button = Button(center_x, 300, btn_width, btn_height, 'Settings')
         self.back_button = Button(center_x, 400, btn_width, btn_height, 'Back')
         
         # Create speed slider
         self.speed_slider = Slider(center_x, 250, btn_width, 5, 20, SPEED)
 
-    def init_game(self):
-        self.snake = Snake()
-        self.food = Food()
-        self.score = 0
-        self.game_over = False
-        self.game_speed = self.speed_slider.value
-
-    def handle_menu_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    return False
-                elif self.state == 'menu':
-                    if event.key == pygame.K_UP:
-                        self.settings_button.is_hovered = False
-                        self.start_button.is_hovered = True
-                    elif event.key == pygame.K_DOWN:
-                        self.start_button.is_hovered = False
-                        self.settings_button.is_hovered = True
-                    elif event.key == pygame.K_RETURN:
-                        if self.start_button.is_hovered:
-                            self.state = 'playing'
-                            self.init_game()
-                        elif self.settings_button.is_hovered:
-                            self.state = 'settings'
-                elif self.state == 'settings':
-                    if event.key == pygame.K_RETURN and self.back_button.is_hovered:
-                        self.state = 'menu'
-                    elif event.key == pygame.K_UP:
-                        self.back_button.is_hovered = False
-                    elif event.key == pygame.K_DOWN:
-                        self.back_button.is_hovered = True
-                    elif event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
-                        change = -1 if event.key == pygame.K_LEFT else 1
-                        new_value = max(self.speed_slider.min_val, min(self.speed_slider.max_val, self.speed_slider.value + change))
-                        self.speed_slider.value = new_value
-                        self.speed_slider.update_handle_pos()
-                        self.game_speed = new_value
-
-            if self.state == 'menu':
-                if self.start_button.handle_event(event):
-                    self.state = 'playing'
-                    self.init_game()
-                elif self.settings_button.handle_event(event):
-                    self.state = 'settings'
-            elif self.state == 'settings':
-                if self.back_button.handle_event(event):
-                    self.state = 'menu'
-                elif self.speed_slider.handle_event(event):
-                    self.game_speed = self.speed_slider.value
-
-        return True
-
-    def draw_menu(self):
-        self.screen.fill(BLACK)
-        if self.state == 'menu':
-            self.start_button.draw(self.screen)
-            self.settings_button.draw(self.screen)
-        elif self.state == 'settings':
-            font = pygame.font.Font(None, 36)
-            text = font.render(f'Game Speed: {self.speed_slider.value}', True, WHITE)
-            text_rect = text.get_rect(center=(WINDOW_WIDTH//2, 200))
-            self.screen.blit(text, text_rect)
-            self.speed_slider.draw(self.screen)
-            self.back_button.draw(self.screen)
-        pygame.display.flip()
+    def cycle_theme(self, direction: int):
+        self.theme_index = (self.theme_index + direction) % len(self.theme_list)
+        self.current_theme = self.theme_list[self.theme_index]
 
     def handle_events(self):
         if self.state != 'playing':
@@ -281,7 +253,106 @@ class Game:
                     self.snake.turn((-1, 0))
                 elif event.key == pygame.K_RIGHT:
                     self.snake.turn((1, 0))
+                elif event.key == pygame.K_LEFTBRACKET:
+                    self.cycle_theme(-1)
+                elif event.key == pygame.K_RIGHTBRACKET:
+                    self.cycle_theme(1)
         return True
+
+    def draw(self):
+        if self.state != 'playing':
+            self.draw_menu()
+            return
+
+        theme = THEMES[self.current_theme]
+        self.screen.fill(theme['background'])
+        
+        # Draw grid with semi-transparent dotted lines
+        grid_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
+        
+        # Draw vertical grid lines
+        for x in range(0, WINDOW_WIDTH, GRID_SIZE):
+            for y in range(0, WINDOW_HEIGHT, 2):  # Draw dotted lines
+                if y % 4 == 0:  # Skip every other dot to create dotted effect
+                    pygame.draw.line(grid_surface, theme['grid'], (x, y), (x, y + 1))
+        
+        # Draw horizontal grid lines
+        for y in range(0, WINDOW_HEIGHT, GRID_SIZE):
+            for x in range(0, WINDOW_WIDTH, 2):  # Draw dotted lines
+                if x % 4 == 0:  # Skip every other dot to create dotted effect
+                    pygame.draw.line(grid_surface, theme['grid'], (x, y), (x + 1, y))
+        
+        # Blit the grid surface onto the screen
+        self.screen.blit(grid_surface, (0, 0))
+        
+        # Draw snake length and speed with semi-transparent background
+        font = pygame.font.Font(None, 36)
+        # Create a surface for the OSD with alpha channel
+        osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
+        pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background
+        
+        # Render text with smaller font
+        font = pygame.font.Font(None, 24)  # Reduced font size
+        text = font.render(f'🐍 {self.snake.length}   ⚡ {self.game_speed}   Theme: {self.current_theme}', True, TEXT_COLORS['score'])
+        text_rect = text.get_rect(center=(200, 15))  # Center text in OSD surface
+        osd_surface.blit(text, text_rect)
+        
+        # Center OSD surface at the top of the screen
+        self.screen.blit(osd_surface, (WINDOW_WIDTH//2 - 200, 10))
+        
+        # Draw snake segments with rounded corners
+        for i, pos in enumerate(self.snake.positions):
+            color_index = self.snake.get_color_index(i)
+            
+            # Draw main segment body
+            rect = pygame.Rect(pos[0] * GRID_SIZE, pos[1] * GRID_SIZE,
+                             GRID_SIZE-1, GRID_SIZE-1)
+            pygame.draw.rect(self.screen, SNAKE_COLORS[color_index], rect, border_radius=5)
+            
+            # Draw rounded connection if not the last segment
+            if i < len(self.snake.positions) - 1:
+                next_pos = self.snake.positions[i + 1]
+                # Calculate direction between current and next segment
+                dx = next_pos[0] - pos[0]
+                dy = next_pos[1] - pos[1]
+                
+                # Handle wrap-around cases
+                if abs(dx) > 1:
+                    dx = -1 if dx > 0 else 1
+                if abs(dy) > 1:
+                    dy = -1 if dy > 0 else 1
+                
+                # Draw connection rectangle with rounded corners
+                if dx != 0:  # Horizontal connection
+                    connect_rect = pygame.Rect(
+                        min(pos[0], pos[0] + dx) * GRID_SIZE + GRID_SIZE//2,
+                        pos[1] * GRID_SIZE,
+                        abs(dx) * GRID_SIZE,
+                        GRID_SIZE-1
+                    )
+                    pygame.draw.rect(self.screen, SNAKE_COLORS[color_index], connect_rect, border_radius=5)
+                elif dy != 0:  # Vertical connection
+                    connect_rect = pygame.Rect(
+                        pos[0] * GRID_SIZE,
+                        min(pos[1], pos[1] + dy) * GRID_SIZE + GRID_SIZE//2,
+                        GRID_SIZE-1,
+                        abs(dy) * GRID_SIZE
+                    )
+                    pygame.draw.rect(self.screen, SNAKE_COLORS[color_index], connect_rect, border_radius=5)
+
+        # Draw food
+        rect = pygame.Rect(self.food.position[0] * GRID_SIZE,
+                         self.food.position[1] * GRID_SIZE,
+                         GRID_SIZE-1, GRID_SIZE-1)
+        pygame.draw.rect(self.screen, self.food.color, rect, border_radius=5)
+
+        if self.game_over:
+            font = pygame.font.Font(None, 48)
+            text = font.render('Game Over! Press ESC for Menu', True, WHITE)
+            text_rect = text.get_rect(center=(WINDOW_WIDTH//2, WINDOW_HEIGHT//2))
+            self.screen.blit(text, text_rect)
+
+        pygame.display.flip()
 
     def update(self):
         if self.state != 'playing' or self.game_over:
@@ -309,23 +380,23 @@ class Game:
             self.draw_menu()
             return
 
-        self.screen.fill(BLACK)
+        theme = THEMES[self.current_theme]
+        self.screen.fill(theme['background'])
         
         # Draw grid with semi-transparent dotted lines
-        grid_color = (128, 128, 128, 64)  # Semi-transparent gray
         grid_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
         
         # Draw vertical grid lines
         for x in range(0, WINDOW_WIDTH, GRID_SIZE):
             for y in range(0, WINDOW_HEIGHT, 2):  # Draw dotted lines
                 if y % 4 == 0:  # Skip every other dot to create dotted effect
-                    pygame.draw.line(grid_surface, grid_color, (x, y), (x, y + 1))
+                    pygame.draw.line(grid_surface, theme['grid'], (x, y), (x, y + 1))
         
         # Draw horizontal grid lines
         for y in range(0, WINDOW_HEIGHT, GRID_SIZE):
             for x in range(0, WINDOW_WIDTH, 2):  # Draw dotted lines
                 if x % 4 == 0:  # Skip every other dot to create dotted effect
-                    pygame.draw.line(grid_surface, grid_color, (x, y), (x + 1, y))
+                    pygame.draw.line(grid_surface, theme['grid'], (x, y), (x + 1, y))
         
         # Blit the grid surface onto the screen
         self.screen.blit(grid_surface, (0, 0))
@@ -333,12 +404,175 @@ class Game:
         # Draw snake length and speed with semi-transparent background
         font = pygame.font.Font(None, 36)
         # Create a surface for the OSD with alpha channel
-        osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)  # Reduced height, increased width
-        pygame.draw.rect(osd_surface, (0, 0, 0, 128), (0, 0, 400, 30))  # Semi-transparent black background
+        osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
+        pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background
         
         # Render text with smaller font
         font = pygame.font.Font(None, 24)  # Reduced font size
-        text = font.render(f'🐍 {self.snake.length}   ⚡ {self.game_speed}', True, TEXT_COLORS['score'])
+        text = font.render(f'🐍 {self.snake.length}   ⚡ {self.game_speed}   Theme: {self.current_theme}', True, TEXT_COLORS['score'])
+        text_rect = text.get_rect(center=(200, 15))  # Center text in OSD surface
+        osd_surface.blit(text, text_rect)
+        
+        # Center OSD surface at the top of the screen
+        self.screen.blit(osd_surface, (WINDOW_WIDTH//2 - 200, 10))
+        
+        # Draw snake segments with rounded corners
+        for i, pos in enumerate(self.snake.positions):
+            color_index = self.snake.get_color_index(i)
+            
+            # Draw main segment body
+            rect = pygame.Rect(pos[0] * GRID_SIZE, pos[1] * GRID_SIZE,
+                             GRID_SIZE-1, GRID_SIZE-1)
+            pygame.draw.rect(self.screen, SNAKE_COLORS[color_index], rect, border_radius=5)
+            
+            # Draw rounded connection if not the last segment
+            if i < len(self.snake.positions) - 1:
+                next_pos = self.snake.positions[i + 1]
+                # Calculate direction between current and next segment
+                dx = next_pos[0] - pos[0]
+                dy = next_pos[1] - pos[1]
+                
+                # Handle wrap-around cases
+                if abs(dx) > 1:
+                    dx = -1 if dx > 0 else 1
+                if abs(dy) > 1:
+                    dy = -1 if dy > 0 else 1
+                
+                # Draw connection rectangle with rounded corners
+                if dx != 0:  # Horizontal connection
+                    connect_rect = pygame.Rect(
+                        min(pos[0], pos[0] + dx) * GRID_SIZE + GRID_SIZE//2,
+                        pos[1] * GRID_SIZE,
+                        abs(dx) * GRID_SIZE,
+                        GRID_SIZE-1
+                    )
+                    pygame.draw.rect(self.screen, SNAKE_COLORS[color_index], connect_rect, border_radius=5)
+                elif dy != 0:  # Vertical connection
+                    connect_rect = pygame.Rect(
+                        pos[0] * GRID_SIZE,
+                        min(pos[1], pos[1] + dy) * GRID_SIZE + GRID_SIZE//2,
+                        GRID_SIZE-1,
+                        abs(dy) * GRID_SIZE
+                    )
+                    pygame.draw.rect(self.screen, SNAKE_COLORS[color_index], connect_rect, border_radius=5)
+
+        # Draw food
+        rect = pygame.Rect(self.food.position[0] * GRID_SIZE,
+                         self.food.position[1] * GRID_SIZE,
+                         GRID_SIZE-1, GRID_SIZE-1)
+        pygame.draw.rect(self.screen, self.food.color, rect, border_radius=5)
+
+        if self.game_over:
+            font = pygame.font.Font(None, 48)
+            text = font.render('Game Over! Press ESC for Menu', True, WHITE)
+            text_rect = text.get_rect(center=(WINDOW_WIDTH//2, WINDOW_HEIGHT//2))
+            self.screen.blit(text, text_rect)
+
+        pygame.display.flip()
+
+    def handle_menu_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    if self.state == 'settings':
+                        self.state = 'menu'
+                    else:
+                        return False
+
+            # Handle button events based on current state
+            if self.state == 'menu':
+                if self.start_button.handle_event(event):
+                    self.state = 'playing'
+                    self.current_theme = random.choice(self.theme_list)
+                    self.theme_index = self.theme_list.index(self.current_theme)
+                    self.snake = Snake()
+                    self.food = Food()
+                    return True
+                elif self.settings_button.handle_event(event):
+                    self.state = 'settings'
+                    return True
+            elif self.state == 'settings':
+                if self.back_button.handle_event(event):
+                    self.state = 'menu'
+                    return True
+                self.speed_slider.handle_event(event)
+
+        return True
+
+    def draw_menu(self):
+        self.screen.fill(BLACK)
+        if self.state == 'menu':
+            self.start_button.draw(self.screen)
+            self.settings_button.draw(self.screen)
+        elif self.state == 'settings':
+            self.back_button.draw(self.screen)
+            # Draw speed slider
+            font = pygame.font.Font(None, 36)
+            text = font.render(f'Speed: {self.speed_slider.value}', True, WHITE)
+            text_rect = text.get_rect(center=(WINDOW_WIDTH//2, 200))
+            self.screen.blit(text, text_rect)
+            self.speed_slider.draw(self.screen)
+
+        pygame.display.flip()
+
+    def update(self):
+        if self.state != 'playing' or self.game_over:
+            return
+
+        # Update game speed based on snake length
+        base_speed = self.speed_slider.value
+        length_bonus = self.snake.length // 10
+        self.game_speed = base_speed + length_bonus
+
+        self.move_timer += 1
+        if self.move_timer >= self.fps / self.game_speed:
+            self.move_timer = 0
+            if not self.snake.move():
+                self.game_over = True
+                return
+
+            if self.snake.get_head_position() == self.food.position:
+                self.snake.length += 1
+                self.score += 1
+                self.food.randomize_position(self.snake.positions)
+
+    def draw(self):
+        if self.state != 'playing':
+            self.draw_menu()
+            return
+
+        theme = THEMES[self.current_theme]
+        self.screen.fill(theme['background'])
+        
+        # Draw grid with semi-transparent dotted lines
+        grid_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
+        
+        # Draw vertical grid lines
+        for x in range(0, WINDOW_WIDTH, GRID_SIZE):
+            for y in range(0, WINDOW_HEIGHT, 2):  # Draw dotted lines
+                if y % 4 == 0:  # Skip every other dot to create dotted effect
+                    pygame.draw.line(grid_surface, theme['grid'], (x, y), (x, y + 1))
+        
+        # Draw horizontal grid lines
+        for y in range(0, WINDOW_HEIGHT, GRID_SIZE):
+            for x in range(0, WINDOW_WIDTH, 2):  # Draw dotted lines
+                if x % 4 == 0:  # Skip every other dot to create dotted effect
+                    pygame.draw.line(grid_surface, theme['grid'], (x, y), (x + 1, y))
+        
+        # Blit the grid surface onto the screen
+        self.screen.blit(grid_surface, (0, 0))
+        
+        # Draw snake length and speed with semi-transparent background
+        font = pygame.font.Font(None, 36)
+        # Create a surface for the OSD with alpha channel
+        osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
+        pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background
+        
+        # Render text with smaller font
+        font = pygame.font.Font(None, 24)  # Reduced font size
+        text = font.render(f'🐍 {self.snake.length}   ⚡ {self.game_speed}   Theme: {self.current_theme}', True, TEXT_COLORS['score'])
         text_rect = text.get_rect(center=(200, 15))  # Center text in OSD surface
         osd_surface.blit(text, text_rect)
         

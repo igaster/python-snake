@@ -485,6 +485,31 @@ class Game:
                         self.state = 'menu'
                     else:
                         return False
+                elif event.key == pygame.K_RETURN:  # Handle Enter key
+                    if self.state == 'menu':
+                        if self.start_button.active:
+                            self.state = 'playing'
+                            self.current_theme = random.choice(self.theme_list)
+                            self.theme_index = self.theme_list.index(self.current_theme)
+                            self.snake = Snake()
+                            self.food = Food()
+                            return True
+                        elif self.settings_button.active:
+                            self.state = 'settings'
+                            return True
+                    elif self.state == 'settings' and self.back_button.active:
+                        self.state = 'menu'
+                        return True
+                elif event.key in (pygame.K_UP, pygame.K_DOWN):  # Handle Up/Down keys
+                    if self.state == 'menu':
+                        if event.key == pygame.K_UP:
+                            if self.settings_button.active:
+                                self.settings_button.active = False
+                                self.start_button.active = True
+                        else:  # K_DOWN
+                            if self.start_button.active:
+                                self.start_button.active = False
+                                self.settings_button.active = True
 
             # Handle button events based on current state
             if self.state == 'menu':

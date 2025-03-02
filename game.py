@@ -286,12 +286,22 @@ class Game:
 
     def draw_osd(self, screen, theme):
         font_path = os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf')
-        font = pygame.font.Font(font_path, 16)
-        osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
-        pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))
-        text = font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
-        text_rect = text.get_rect(center=(200, 15))
-        osd_surface.blit(text, text_rect)
+        length_font = pygame.font.Font(font_path, 16)
+        speed_font = pygame.font.Font(font_path, 12)  # Smaller font for speed
+        
+        osd_surface = pygame.Surface((400, 40), pygame.SRCALPHA)  # Increased height for two lines
+        pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 40))
+        
+        # Render length text
+        length_text = length_font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
+        length_rect = length_text.get_rect(center=(200, 10))
+        osd_surface.blit(length_text, length_rect)
+        
+        # Render speed text
+        speed_text = speed_font.render(f'Speed: {self.game_speed}', True, TEXT_COLORS['score'])
+        speed_rect = speed_text.get_rect(center=(200, 28))
+        osd_surface.blit(speed_text, speed_rect)
+        
         screen.blit(osd_surface, (WINDOW_WIDTH//2 - 200, 10))
 
     def draw_snake(self, screen):
@@ -343,8 +353,8 @@ class Game:
         pygame.draw.rect(self.screen, self.food.color, rect, border_radius=5)
 
         if self.game_over:
-            font = pygame.font.Font(os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf'), 16)
-            text = font.render('Game Over!', True, WHITE)
+            font = pygame.font.Font(os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf'), 36)
+            text = font.render('Game Over! Press ESC for Menu', True, WHITE)
             text_rect = text.get_rect(center=(WINDOW_WIDTH//2, WINDOW_HEIGHT//2))
             self.screen.blit(text, text_rect)
 
@@ -553,13 +563,22 @@ class Game:
         # Draw snake length and speed with semi-transparent background
         # Load custom font for OSD
         font_path = os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf')
-        font = pygame.font.Font(font_path, 16)
+        length_font = pygame.font.Font(font_path, 16)
+        speed_font = pygame.font.Font(font_path, 12)  # Smaller font for speed
+        
         # Create a surface for the OSD with alpha channel
-        osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
-        pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background
-        text = font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
-        text_rect = text.get_rect(center=(200, 15))  # Center text in OSD surface
-        osd_surface.blit(text, text_rect)
+        osd_surface = pygame.Surface((400, 40), pygame.SRCALPHA)  # Increased height for two lines
+        pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 40))
+        
+        # Render length text
+        length_text = length_font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
+        length_rect = length_text.get_rect(center=(200, 10))
+        osd_surface.blit(length_text, length_rect)
+        
+        # Render speed text
+        speed_text = speed_font.render(f'Speed: {self.game_speed}', True, TEXT_COLORS['score'])
+        speed_rect = speed_text.get_rect(center=(200, 28))
+        osd_surface.blit(speed_text, speed_rect)
         
         # Center OSD surface at the top of the screen
         self.screen.blit(osd_surface, (WINDOW_WIDTH//2 - 200, 10))

@@ -90,6 +90,7 @@ class Slider:
         self.handle_rect = pygame.Rect(0, 0, 20, 20)
         self.update_handle_pos()
         self.dragging = False
+        self.has_focus = False  # Add focus state
 
     def update_handle_pos(self):
         val_range = self.max_val - self.min_val
@@ -98,8 +99,18 @@ class Slider:
         self.handle_rect.centery = self.rect.centery
 
     def draw(self, screen):
-        pygame.draw.rect(screen, WHITE, self.rect)
-        pygame.draw.rect(screen, GRAY, self.handle_rect)
+        # Draw the slider track with different colors based on focus state
+        track_color = (100, 100, 100) if self.has_focus else WHITE
+        pygame.draw.rect(screen, track_color, self.rect)
+        
+        # Draw the handle with different colors and effects based on focus state
+        handle_color = (150, 150, 150) if self.has_focus else GRAY
+        pygame.draw.rect(screen, handle_color, self.handle_rect)
+        
+        # Draw focus indicator when focused
+        if self.has_focus:
+            focus_rect = self.handle_rect.inflate(4, 4)
+            pygame.draw.rect(screen, WHITE, focus_rect, 2)
 
     def handle_event(self, event) -> bool:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -462,7 +473,7 @@ class Game:
                             if isinstance(item['element'], Button):
                                 item['element'].active = (i == self.settings_focus_index)
                             elif isinstance(item['element'], Slider):
-                                item['element'].dragging = (i == self.settings_focus_index)
+                                item['element'].has_focus = (i == self.settings_focus_index)
                     
                     # Handle left/right keys for slider when it's focused
                     elif event.key in (pygame.K_LEFT, pygame.K_RIGHT) and isinstance(self.settings_focusables[self.settings_focus_index]['element'], Slider):

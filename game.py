@@ -572,7 +572,7 @@ class Game:
         # Create a surface for the OSD with alpha channel
         osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
         pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background
-        text = font.render(f'Length {self.snake.length}', True, TEXT_COLORS['score'])
+        text = font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
         text_rect = text.get_rect(center=(200, 15))  # Center text in OSD surface
         osd_surface.blit(text, text_rect)
         

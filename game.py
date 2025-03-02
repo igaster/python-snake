@@ -422,6 +422,9 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     if self.state == 'settings':
                         self.state = 'menu'
+                    elif self.state == 'menu':
+                        # Do nothing when ESC is pressed in main menu
+                        pass
                     else:
                         return False
                 elif event.key == pygame.K_RETURN:  # Handle Enter key

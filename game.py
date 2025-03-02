@@ -182,7 +182,7 @@ THEMES = {
     'forest': {
         'name': 'Forest',
         'background': (15, 56, 15),  # Dark green
-        'grid': (48, 98, 48, 64),  # Semi-transparent light green
+        'grid': (58, 108, 58, 64),  # Semi-transparent light green
         'osd_bg': (15, 56, 15, 128),  # Semi-transparent dark green
         'osd_text': (144, 238, 144),  # Light green
     },
@@ -293,13 +293,13 @@ class Game:
         pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 40))
         
         # Render length text
-        length_text = length_font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
+        length_text = length_font.render(f'Length: {self.snake.length}', True, theme['grid'])
         length_rect = length_text.get_rect(center=(200, 10))
         osd_surface.blit(length_text, length_rect)
         
-        # Render speed text
-        speed_text = speed_font.render(f'Speed: {self.game_speed}', True, TEXT_COLORS['score'])
-        speed_rect = speed_text.get_rect(center=(200, 28))
+        # Render speed text with smaller font below length
+        speed_text = speed_font.render(f'Speed: {self.game_speed}', True, theme['grid'])
+        speed_rect = speed_text.get_rect(center=(200, 28))  # Positioned below length text
         osd_surface.blit(speed_text, speed_rect)
         
         screen.blit(osd_surface, (WINDOW_WIDTH//2 - 200, 10))
@@ -571,12 +571,12 @@ class Game:
         pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 40))
         
         # Render length text
-        length_text = length_font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
+        length_text = length_font.render(f'Length: {self.snake.length}', True, theme['grid'])
         length_rect = length_text.get_rect(center=(200, 10))
         osd_surface.blit(length_text, length_rect)
         
         # Render speed text
-        speed_text = speed_font.render(f'Speed: {self.game_speed}', True, TEXT_COLORS['score'])
+        speed_text = speed_font.render(f'Speed: {self.game_speed}', True, theme['grid'])
         speed_rect = speed_text.get_rect(center=(200, 28))
         osd_surface.blit(speed_text, speed_rect)
         

@@ -169,6 +169,7 @@ class Game:
         self.game_over = False
         self.game_speed = SPEED
         self.state = 'menu'  # 'menu', 'settings', 'playing'
+        self.font = pygame.font.Font(None, 36)  # Initialize font
         
         # Create menu buttons
         btn_width, btn_height = 200, 50
@@ -305,8 +306,19 @@ class Game:
         pygame.draw.rect(osd_surface, (0, 0, 0, 128), (0, 0, 200, 80))  # Semi-transparent black background
         
         # Render text
-        length_text = font.render(f'Length: {self.snake.length}', True, WHITE)
-        speed_text = font.render(f'Speed: {self.game_speed}', True, WHITE)
+        # Add after existing color definitions
+        TEXT_COLORS = {
+            'title': SNAKE_COLORS[0],     # Green
+            'score': SNAKE_COLORS[9],     # Blue
+            'game_over': SNAKE_COLORS[18]  # Pink
+        }
+
+        # Render title text
+        title_text = self.font.render('Snake Game', True, TEXT_COLORS['title'])
+        
+        # ... in draw method:
+        length_text = self.font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
+        speed_text = self.font.render(f'Speed: {self.game_speed}', True, TEXT_COLORS['score'])
         
         # Blit text onto OSD surface
         osd_surface.blit(length_text, (10, 10))

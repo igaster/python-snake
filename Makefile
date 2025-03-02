@@ -1,4 +1,4 @@
-.PHONY: venv init test
+.PHONY: venv init test run
 
 PYTHON = python3
 
@@ -16,3 +16,6 @@ init:
 
 test: venv
 	venv/bin/pytest test_game.py -v
+
+run: venv
+	venv/bin/python3 game.py

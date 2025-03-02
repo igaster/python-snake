@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import os
 from typing import Tuple, List
 
 # Initialize Pygame
@@ -286,14 +287,13 @@ class Game:
         self.screen.blit(grid_surface, (0, 0))
         
         # Draw snake length and speed with semi-transparent background
-        font = pygame.font.Font(None, 36)
+        # Load custom font for OSD
+        font_path = os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf')
+        font = pygame.font.Font(font_path, 20)
         # Create a surface for the OSD with alpha channel
         osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
         pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background
-        
-        # Render text with smaller font
-        font = pygame.font.Font(None, 24)  # Reduced font size
-        text = font.render(f'🐍 {self.snake.length}   ⚡ {self.game_speed}   Theme: {self.current_theme}', True, TEXT_COLORS['score'])
+        text = font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
         text_rect = text.get_rect(center=(200, 15))  # Center text in OSD surface
         osd_surface.blit(text, text_rect)
         
@@ -347,7 +347,7 @@ class Game:
         pygame.draw.rect(self.screen, self.food.color, rect, border_radius=5)
 
         if self.game_over:
-            font = pygame.font.Font(None, 48)
+            font = pygame.font.Font(os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf'), 36)
             text = font.render('Game Over! Press ESC for Menu', True, WHITE)
             text_rect = text.get_rect(center=(WINDOW_WIDTH//2, WINDOW_HEIGHT//2))
             self.screen.blit(text, text_rect)
@@ -408,13 +408,12 @@ class Game:
         self.screen.blit(grid_surface, (0, 0))
         
         # Draw snake length and speed with semi-transparent background
-        font = pygame.font.Font(None, 36)
+        # Load custom font for OSD
+        font_path = os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf')
+        font = pygame.font.Font(font_path, 20)
         # Create a surface for the OSD with alpha channel
         osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
         pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background
-        
-        # Render text with smaller font
-        font = pygame.font.Font(None, 24)  # Reduced font size
         text = font.render(f'🐍 {self.snake.length}   ⚡ {self.game_speed}', True, TEXT_COLORS['score'])
         text_rect = text.get_rect(center=(200, 15))  # Center text in OSD surface
         osd_surface.blit(text, text_rect)
@@ -469,7 +468,7 @@ class Game:
         pygame.draw.rect(self.screen, self.food.color, rect, border_radius=5)
 
         if self.game_over:
-            font = pygame.font.Font(None, 48)
+            font = pygame.font.Font(os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf'), 36)
             text = font.render('Game Over! Press ESC for Menu', True, WHITE)
             text_rect = text.get_rect(center=(WINDOW_WIDTH//2, WINDOW_HEIGHT//2))
             self.screen.blit(text, text_rect)
@@ -577,14 +576,13 @@ class Game:
         self.screen.blit(grid_surface, (0, 0))
         
         # Draw snake length and speed with semi-transparent background
-        font = pygame.font.Font(None, 36)
+        # Load custom font for OSD
+        font_path = os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf')
+        font = pygame.font.Font(font_path, 20)
         # Create a surface for the OSD with alpha channel
         osd_surface = pygame.Surface((400, 30), pygame.SRCALPHA)
         pygame.draw.rect(osd_surface, theme['osd_bg'], (0, 0, 400, 30))  # Semi-transparent background
-        
-        # Render text with smaller font
-        font = pygame.font.Font(None, 24)  # Reduced font size
-        text = font.render(f'🐍 {self.snake.length}   ⚡ {self.game_speed}   Theme: {self.current_theme}', True, TEXT_COLORS['score'])
+        text = font.render(f'Length: {self.snake.length}', True, TEXT_COLORS['score'])
         text_rect = text.get_rect(center=(200, 15))  # Center text in OSD surface
         osd_surface.blit(text, text_rect)
         
@@ -638,7 +636,7 @@ class Game:
         pygame.draw.rect(self.screen, self.food.color, rect, border_radius=5)
 
         if self.game_over:
-            font = pygame.font.Font(None, 48)
+            font = pygame.font.Font(os.path.join('assets', 'fonts', 'PressStart2P-Regular.ttf'), 36)
             text = font.render('Game Over! Press ESC for Menu', True, WHITE)
             text_rect = text.get_rect(center=(WINDOW_WIDTH//2, WINDOW_HEIGHT//2))
             self.screen.blit(text, text_rect)

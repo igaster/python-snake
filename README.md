@@ -2,6 +2,8 @@
 
 > **Note**: This README was generated with the assistance of AI.
 
+![Snake Game Screenshot](assets/screenshot.png)
+
 ## Overview
 A modern implementation of the classic Snake game built with Python and Pygame, featuring smooth controls, progressive difficulty, and dynamic color effects.
 

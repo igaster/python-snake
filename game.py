@@ -426,11 +426,20 @@ class Game:
                         # Do nothing when ESC is pressed in main menu
                         pass
                     else:
-                        return False
+                        self.state = 'menu'
+                        self.game_over = False
+                        self.score = 0
+                        self.move_timer = 0
+                        self.game_speed = self.speed_slider.value
+                        return True
                 elif event.key == pygame.K_RETURN:  # Handle Enter key
                     if self.state == 'menu':
                         if self.start_button.active:
                             self.state = 'playing'
+                            self.game_over = False
+                            self.score = 0
+                            self.move_timer = 0
+                            self.game_speed = self.speed_slider.value
                             self.current_theme = random.choice(self.theme_list)
                             self.theme_index = self.theme_list.index(self.current_theme)
                             self.snake = Snake()

@@ -48,16 +48,21 @@ class Button:
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.color = WHITE
-        self.hover_color = GRAY
-        self.font = pygame.font.Font(None, 36)
+        self.active = False
         self.is_hovered = False
+        self.bg_color = (50, 50, 50)  # Soft dark background for active state
 
     def draw(self, screen):
-        color = self.hover_color if self.is_hovered else self.color
-        pygame.draw.rect(screen, color, self.rect, 2)
-        text_surface = self.font.render(self.text, True, color)
-        text_rect = text_surface.get_rect(center=self.rect.center)
-        screen.blit(text_surface, text_rect)
+        if self.active or self.is_hovered:
+            pygame.draw.rect(screen, self.bg_color, self.rect)  # Draw background when active
+            pygame.draw.rect(screen, self.color, self.rect, 3)  # Thicker border (3 pixels) when active
+        else:
+            pygame.draw.rect(screen, self.color, self.rect, 1)  # Normal border (1 pixel) when inactive
+        
+        font = pygame.font.Font(None, 36)
+        text = font.render(self.text, True, self.color)
+        text_rect = text.get_rect(center=self.rect.center)
+        screen.blit(text, text_rect)
 
     def handle_event(self, event) -> bool:
         if event.type == pygame.MOUSEMOTION:
